@@ -22,99 +22,70 @@ const DrawerNavigatorItems = ({
   activeLabelStyle,
   inactiveLabelStyle,
   iconContainerStyle,
-  drawerPosition,
-}) => (
-  <View style={[styles.container, itemsContainerStyle]}>
+  drawerPosition
+}) => <View style={[styles.container, itemsContainerStyle]}>
     {items.map((route, index) => {
-      const focused = activeItemKey === route.key;
-      const color = focused ? activeTintColor : inactiveTintColor;
-      const backgroundColor = focused
-        ? activeBackgroundColor
-        : inactiveBackgroundColor;
-      const scene = { route, index, focused, tintColor: color };
-      const icon = renderIcon(scene);
-      const label = getLabel(scene);
-      const accessibilityLabel = typeof label === 'string' ? label : undefined;
-      const extraLabelStyle = focused ? activeLabelStyle : inactiveLabelStyle;
-      return (
-        <TouchableItem
-          key={route.key}
-          accessible
-          accessibilityLabel={accessibilityLabel}
-          onPress={() => {
-            onItemPress({ route, focused });
-          }}
-          delayPressIn={0}
-        >
-          <SafeAreaView
-            style={{ backgroundColor }}
-            forceInset={{
-              [drawerPosition]: 'always',
-              [drawerPosition === 'left' ? 'right' : 'left']: 'never',
-              vertical: 'never',
-            }}
-          >
+    const focused = activeItemKey === route.key;
+    const color = focused ? activeTintColor : inactiveTintColor;
+    const backgroundColor = focused ? activeBackgroundColor : inactiveBackgroundColor;
+    const scene = { route, index, focused, tintColor: color };
+    const icon = renderIcon(scene);
+    const label = getLabel(scene);
+    const accessibilityLabel = typeof label === 'string' ? label : undefined;
+    const extraLabelStyle = focused ? activeLabelStyle : inactiveLabelStyle;
+    return <TouchableItem routeName={route.routeName} key={route.key} accessible accessibilityLabel={accessibilityLabel} onPress={() => {
+      onItemPress({ route, focused });
+    }} delayPressIn={0}>
+          <SafeAreaView style={{ backgroundColor }} forceInset={{
+        [drawerPosition]: 'always',
+        [drawerPosition === 'left' ? 'right' : 'left']: 'never',
+        vertical: 'never'
+      }}>
             <View style={[styles.item, itemStyle]}>
-              {icon ? (
-                <View
-                  style={[
-                    styles.icon,
-                    focused ? null : styles.inactiveIcon,
-                    iconContainerStyle,
-                  ]}
-                >
+              {icon ? <View style={[styles.icon, focused ? null : styles.inactiveIcon, iconContainerStyle]}>
                   {icon}
-                </View>
-              ) : null}
-              {typeof label === 'string' ? (
-                <Text
-                  style={[styles.label, { color }, labelStyle, extraLabelStyle]}
-                >
+                </View> : null}
+              {typeof label === 'string' ? <Text style={[styles.label, { color }, labelStyle, extraLabelStyle]}>
                   {label}
-                </Text>
-              ) : (
-                label
-              )}
+                </Text> : label}
             </View>
           </SafeAreaView>
-        </TouchableItem>
-      );
-    })}
-  </View>
-);
+        </TouchableItem>;
+  })}
+  </View>;
 
 /* Material design specs - https://material.io/guidelines/patterns/navigation-drawer.html#navigation-drawer-specs */
 DrawerNavigatorItems.defaultProps = {
   activeTintColor: '#2196f3',
   activeBackgroundColor: 'rgba(0, 0, 0, .04)',
   inactiveTintColor: 'rgba(0, 0, 0, .87)',
-  inactiveBackgroundColor: 'transparent',
+  inactiveBackgroundColor: 'transparent'
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 4,
+    paddingVertical: 4
   },
   item: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   icon: {
     marginHorizontal: 16,
     width: 24,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   inactiveIcon: {
     /*
      * Icons have 0.54 opacity according to guidelines
      * 100/87 * 54 ~= 62
      */
-    opacity: 0.62,
+    opacity: 0.62
   },
   label: {
     margin: 16,
-    fontWeight: 'bold',
-  },
+    fontWeight: 'bold'
+  }
 });
 
 export default DrawerNavigatorItems;
