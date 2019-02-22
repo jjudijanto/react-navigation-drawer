@@ -8,22 +8,21 @@
  * of TouchableNativeFeedback.
  */
 import React from 'react';
-import {
-  Platform,
-  TouchableNativeFeedback,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Platform, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native';
+import testable from '../../../../specs/testable';
 
 const ANDROID_VERSION_LOLLIPOP = 21;
 
 export default class TouchableItem extends React.Component {
   static defaultProps = {
     borderless: false,
-    pressColor: 'rgba(0, 0, 0, .32)',
+    pressColor: 'rgba(0, 0, 0, .32)'
   };
 
   render() {
+    const {routeName} = this.props
+    const TestableTouchAndroid = testable(routeName+'.Button')(TouchableNativeFeedback)
+    const TestableTouchIOS = testable(routeName+'.Button')(TouchableOpacity)
     /*
      * TouchableNativeFeedback.Ripple causes a crash on old Android versions,
      * therefore only enable it on Android Lollipop and above.
@@ -32,27 +31,13 @@ export default class TouchableItem extends React.Component {
      * platform design guidelines.
      * We need to pass the background prop to specify a borderless ripple effect.
      */
-    if (
-      Platform.OS === 'android' &&
-      Platform.Version >= ANDROID_VERSION_LOLLIPOP
-    ) {
+    if (Platform.OS === 'android' && Platform.Version >= ANDROID_VERSION_LOLLIPOP) {
       const { style, ...rest } = this.props;
-      return (
-        <TouchableNativeFeedback
-          {...rest}
-          style={null}
-          background={TouchableNativeFeedback.Ripple(
-            this.props.pressColor,
-            this.props.borderless
-          )}
-        >
+      return <TestableTouchAndroid {...rest} style={null} background={TouchableNativeFeedback.Ripple(this.props.pressColor, this.props.borderless)}>
           <View style={style}>{React.Children.only(this.props.children)}</View>
-        </TouchableNativeFeedback>
-      );
+        </TestableTouchAndroid>;
     }
 
-    return (
-      <TouchableOpacity {...this.props}>{this.props.children}</TouchableOpacity>
-    );
+    return <TestableTouchIOS {...this.props}>{this.props.children}</TestableTouchIOS>;
   }
 }
